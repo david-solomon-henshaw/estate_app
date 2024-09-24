@@ -1,101 +1,47 @@
-// import React, { useState } from 'react';
-
-// const ManualEntry = () => {
-//   const [licensePlate, setLicensePlate] = useState('');
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [response, setResponse] = useState(null);
-//   const [error, setError] = useState('');
-
-//   const simulateApiCall = (plate) => {
-//     setIsLoading(true);
-//     setTimeout(() => {
-//       // Simulate a successful API response
-//       setIsLoading(false);
-//       setResponse({
-//         status: 200,
-//         data: {
-//           licensePlate: plate,
-//           residentName: 'John Doe',
-//           carModel: 'Toyota Camry',
-//           authorizedDriver: 'Jane Smith',
-//           driverPicture: 'https://example.com/driver.jpg'
-//         }
-//       });
-//       setError('');
-//     }, 2000); // Simulate 2-second delay
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (!licensePlate) {
-//       setError('License plate is required');
-//       return;
-//     }
-//     setError('');
-//     simulateApiCall(licensePlate);
-//   };
-
-//   return (
-//     <div className="manual-entry">
-//       <h2>Manual License Plate Entry</h2>
-//       <form onSubmit={handleSubmit}>
-//         <div className="form-group">
-//           <label htmlFor="licensePlate">License Plate:</label>
-//           <input 
-//             type="text" 
-//             id="licensePlate" 
-//             value={licensePlate} 
-//             onChange={(e) => setLicensePlate(e.target.value)} 
-//             required 
-//           />
-//         </div>
-//         <button type="submit">
-//           {isLoading ? 'Submitting...' : 'Submit'}
-//         </button>
-//         {isLoading && <p>Loading...</p>}
-//         {error && <p style={{ color: 'red' }}>{error}</p>}
-//       </form>
-//       {response && response.status === 200 && (
-//         <div className="response">
-//           <h3>Submission Result</h3>
-//           <p><strong>License Plate:</strong> {response.data.licensePlate}</p>
-//           <p><strong>Resident Name:</strong> {response.data.residentName}</p>
-//           <p><strong>Car Model:</strong> {response.data.carModel}</p>
-//           <p><strong>Authorized Driver:</strong> {response.data.authorizedDriver}</p>
-//           <img src={response.data.driverPicture} alt="Driver" width="100" />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ManualEntry;
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ManualEntry = () => {
   const [licensePlate, setLicensePlate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState(null);
+  const [residents, setResidents] = useState([]); // Store fetched residents
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // Use navigate to route programmatically
 
-  const simulateApiCall = (plate) => {
+  useEffect(() => {
+    // Fetch residents on component mount
+    const fetchResidents = async () => {
+      try {
+        const response = await fetch('https://flask-backend-estate.onrender.com/api/residents');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setResidents(data);
+      } catch (error) {
+        console.error('Error fetching residents:', error);
+        setError('Failed to fetch residents');
+      }
+    };
+
+    fetchResidents();
+  }, []);
+
+  const simulateApiCall = () => {
     setIsLoading(true);
     setTimeout(() => {
-      // Simulate a successful API response
+      if (residents.length > 0) {
+        const randomIndex = Math.floor(Math.random() * residents.length);
+        const randomResident = residents[randomIndex]; // Select random resident
+        
+        // Navigate to the ResidentCard page with resident details
+        navigate('/security/resident', { state: { resident: randomResident } });
+      } else {
+        setError('No residents found');
+      }
       setIsLoading(false);
-      setResponse({
-        status: 200,
-        data: {
-          licensePlate: plate,
-          residentName: 'John Doe',
-          carModel: 'Toyota Camry',
-          authorizedDriver: 'Jane Smith',
-          driverPicture: 'https://example.com/driver.jpg'
-        }
-      });
-      setError('');
     }, 2000); // Simulate 2-second delay
   };
 
@@ -106,7 +52,7 @@ const ManualEntry = () => {
       return;
     }
     setError('');
-    simulateApiCall(licensePlate);
+    simulateApiCall();
   };
 
   return (
@@ -127,17 +73,23 @@ const ManualEntry = () => {
         <button type="submit" className="btn btn-primary">
           {isLoading ? 'Submitting...' : 'Submit'}
         </button>
-        {isLoading && <p>Loading...</p>}
         {error && <p className="text-danger">{error}</p>}
       </form>
-      {response && response.status === 200 && (
-        <div className="response border p-3 rounded">
-          <h3>Submission Result</h3>
-          <p><strong>License Plate:</strong> {response.data.licensePlate}</p>
-          <p><strong>Resident Name:</strong> {response.data.residentName}</p>
-          <p><strong>Car Model:</strong> {response.data.carModel}</p>
-          <p><strong>Authorized Driver:</strong> {response.data.authorizedDriver}</p>
-          <img src={response.data.driverPicture} alt="Driver" className="img-fluid" width="100" />
+
+      {/* Loading Screen */}
+      {isLoading && (
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center" 
+          style={{ 
+            backgroundColor: '#007BFF',  // Bootstrap's blue color
+            color: '#fff',                // White text
+            zIndex: 9999 
+          }}
+        >
+          <h1>Primewater</h1>
+          <div className="spinner-border text-light mt-3" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
       )}
     </div>

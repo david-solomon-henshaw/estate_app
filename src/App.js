@@ -11,6 +11,7 @@ import ManualEntry from './pages/ManualEntry';
 import ManageResidents from './pages/ManageResidents';
 import ManageCars from './pages/ManageCars';
 import ManageDrivers from './pages/ManageDrivers';
+import ResidentCard from './components/ResidentCard';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
               <Route path="scan" element={<LicensePlateScanner />} />
               <Route path="manual" element={<ManualEntry />} />
               <Route index element={<LicensePlateScanner />} />
+              <Route path="resident" element={<ResidentCard />} />
             </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="*" element={<LoginPage />} />

@@ -159,7 +159,7 @@ const AddCarForm = () => {
                 required
                 disabled={!selectedBuilding} // Disable until a building is selected
               >
-                <option value="">Select Resident</option>
+                <option value="">Select Resident First</option>
                 {filteredResidents.map((resident) => (
                   <option key={resident._id} value={resident._id}>
                     {resident.name}

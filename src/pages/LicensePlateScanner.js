@@ -8,24 +8,30 @@ const LicensePlateScanner = () => {
   const [error, setError] = useState('');
   const [licensePlate, setLicensePlate] = useState('');
   const [residents, setResidents] = useState([]);
-  const [selectedResident, setSelectedResident] = useState(null); // This initializes the state
+  const [selectedResident, setSelectedResident] = useState(null);
   const videoRef = useRef(null);
-  const navigate = useNavigate(); // Get the navigate function from useNavigate
+  const canvasRef = useRef(null);
+  const navigate = useNavigate();
 
+  const isIPhone = () => {
+    return /iPhone/i.test(navigator.userAgent);
+  };
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }  // This requests the back camera
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      setError("Failed to access camera. Please ensure you 've granted camera permissions.");
+    }
+  };
 
   useEffect(() => {
-    const startCamera = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      } catch (err) {
-        console.error('Error accessing camera:', err);
-        setError('Failed to access camera');
-      }
-    };
-
     const fetchResidents = async () => {
       try {
         const response = await fetch('https://flask-backend-estate.onrender.com/api/residents');
@@ -45,21 +51,38 @@ const LicensePlateScanner = () => {
   }, []);
 
   const handleScan = () => {
+    if (isIPhone()) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      if (video && canvas) {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = canvas.toDataURL('image/jpeg');
+        console.log('Captured Image Data URL:', imageData);
+        // Here you would typically process the image data (e.g., send to backend for license plate recognition)
+        // For now, we'll simulate the process similar to non-iPhone devices
+        simulateScan();
+      }
+    } else {
+      simulateScan();
+    }
+  };
+
+  const simulateScan = () => {
     const mockPlate = 'ABC123'; // Simulated scanned license plate
     setLicensePlate(mockPlate);
     setIsLoading(true);
-  
+
     // Simulate a delay to show the loading indicator
     setTimeout(() => {
       if (residents.length > 0) {
         const randomIndex = Math.floor(Math.random() * residents.length);
-        const selectedResidentData = residents[randomIndex]; // Set the resident here
-        setSelectedResident(selectedResidentData); // Set the state correctly
-  
-        // Navigate to the ResidentCard page with resident details as state
-        console.log(residents);
-        console.log(selectedResidentData);
-        navigate('/security/resident', { state: { resident: selectedResidentData } }); // Pass the resident here
+        const selectedResidentData = residents[randomIndex];
+        setSelectedResident(selectedResidentData);
+        navigate('/security/resident', { state: { resident: selectedResidentData } });
       }
       setIsLoading(false);
       setError('');
@@ -72,13 +95,15 @@ const LicensePlateScanner = () => {
         <div className="col py-3">
           <h2>License Plate Scanner</h2>
           <div className="camera-feed mb-3">
-            <video ref={videoRef} className="w-100" autoPlay />
+            <video ref={videoRef} className="w-100" autoPlay playsInline />
           </div>
+          {isIPhone() && (
+            <canvas ref={canvasRef} className="w-100 d-none" />
+          )}
           <button className="btn btn-primary" onClick={handleScan}>
             {isLoading ? 'Scanning...' : 'Scan License Plate'}
           </button>
           {error && <p className="text-danger">{error}</p>}
-
         </div>
       </div>
       {isLoading && (

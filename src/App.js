@@ -18,6 +18,9 @@ import ResidentCard from './components/ResidentCard';
 import AddVisitor from './pages/AddVisitor'; // Placeholder for AddVisitor component
 import ResidentHistory from './pages/ResidentHistory'; // Placeholder for ResidentHistory component
 import ResidentProfile from './pages/ResidentProfile'; // Placeholder for ResidentProfile component
+import ManageResidentCars from './pages/ManageResidentCars';  // Placeholder for Cars
+import ManageResidentDrivers from './pages/ManageResidentDrivers';  // Placeholder for Drivers
+import VisitorHistory from './pages/VisitorHistory';  // Placeholder for Visitor History page
 
 function App() {
   return (
@@ -51,6 +54,9 @@ function App() {
               <Route path="add-visitor" element={<AddVisitor />} /> {/* Placeholder for AddVisitor */}
               <Route path="history" element={<ResidentHistory />} /> {/* Placeholder for ResidentHistory */}
               <Route path="profile" element={<ResidentProfile />} /> {/* Placeholder for ResidentProfile */}
+              <Route path="cars" element={<ManageResidentCars />} />
+              <Route path="drivers" element={<ManageResidentDrivers />} />
+              <Route path="visitor-history" element={<VisitorHistory />} />
             </Route>
 
             {/* Default Route for Login */}

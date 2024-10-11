@@ -36,7 +36,7 @@ const LicensePlateScanner = () => {
       try {
         const response = await fetch('https://flask-backend-estate.onrender.com/api/residents');
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          console.log('Network response was not ok');
         }
         const data = await response.json();
         setResidents(data);

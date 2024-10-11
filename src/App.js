@@ -51,9 +51,10 @@ function App() {
 
             {/* Resident Routes */}
             <Route path="/resident" element={<ResidentDashboard />}>
-              <Route path="add-visitor" element={<AddVisitor />} /> {/* Placeholder for AddVisitor */}
-              <Route path="history" element={<ResidentHistory />} /> {/* Placeholder for ResidentHistory */}
-              <Route path="profile" element={<ResidentProfile />} /> {/* Placeholder for ResidentProfile */}
+              <Route path="add-visitor" element={<AddVisitor />} /> 
+              <Route index element={<AddVisitor />} /> 
+              <Route path="history" element={<ResidentHistory />} /> 
+              <Route path="profile" element={<ResidentProfile />} />
               <Route path="cars" element={<ManageResidentCars />} />
               <Route path="drivers" element={<ManageResidentDrivers />} />
               <Route path="visitor-history" element={<VisitorHistory />} />

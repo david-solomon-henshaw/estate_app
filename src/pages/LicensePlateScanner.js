@@ -27,7 +27,7 @@ const LicensePlateScanner = () => {
       }
     } catch (err) {
       console.error('Error accessing camera:', err);
-      setError("Failed to access camera. Please ensure you 've granted camera permissions.");
+      setError("Failed to access camera. Please ensure you've granted camera permissions.");
     }
   };
 
@@ -62,8 +62,6 @@ const LicensePlateScanner = () => {
         
         const imageData = canvas.toDataURL('image/jpeg');
         console.log('Captured Image Data URL:', imageData);
-        // Here you would typically process the image data (e.g., send to backend for license plate recognition)
-        // For now, we'll simulate the process similar to non-iPhone devices
         simulateScan();
       }
     } else {
@@ -88,7 +86,7 @@ const LicensePlateScanner = () => {
       setError('');
     }, 2000);
   };
-  
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -106,9 +104,18 @@ const LicensePlateScanner = () => {
           {error && <p className="text-danger">{error}</p>}
         </div>
       </div>
+      {/* Loading Screen */}
       {isLoading && (
-        <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', zIndex: 9999 }}>
-          <div className="spinner-border text-primary" role="status">
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center" 
+          style={{ 
+            backgroundColor: '#007BFF',  // Bootstrap's blue color
+            color: '#fff',                // White text
+            zIndex: 9999 
+          }}
+        >
+          <h1>Primewater</h1>
+          <div className="spinner-border text-light mt-3" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>

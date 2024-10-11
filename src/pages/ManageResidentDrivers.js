@@ -1,9 +1,14 @@
-import React from 'react'
+// src/pages/ManageDrivers.js
+import React from 'react';
 
-const ManageResidentDrivers = () => {
+const ManageDrivers = () => {
   return (
-    <div>ManageResidentDrivers</div>
-  )
-}
+    <div className="container mt-4">
+      <h2>Manage Drivers</h2>
+      <p>This section will allow residents to manage their drivers.</p>
+      {/* Add form or table for managing drivers here */}
+    </div>
+  );
+};
 
-export default ManageResidentDrivers
+export default ManageDrivers;
